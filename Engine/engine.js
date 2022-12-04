@@ -31,5 +31,10 @@ function e_init() {
   I_init();
   init();
   setInterval(update, e_updateTick);
+  setInterval(_e_tick, e_updateTick);
 
+}
+
+function _e_tick() {
+  _input_update();
 }

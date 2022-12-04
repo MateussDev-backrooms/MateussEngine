@@ -109,3 +109,23 @@ function v_sphereCollision(pos1, r1, pos2, r2) {
   }
   return false;
 }
+
+function n_average(arrayNum) {
+  let _val = 0;
+  arrayNum.forEach((num, i) => {
+    _val += num;
+  });
+
+  _val = _val / arrayNum.length;
+  return _val;
+}
+
+function n_clamp(x, min, max) {
+  if(x < min) {
+    return min;
+  } else if(x > max) {
+    return max;
+  } else {
+    return x;
+  }
+}

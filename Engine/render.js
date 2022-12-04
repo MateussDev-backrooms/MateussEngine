@@ -8,6 +8,7 @@ var r_isError = false;
 
 //Config
 var r_clearScreen = true;
+var r_debug = false;
 
 //Camera
 class Camera {
@@ -51,6 +52,11 @@ function r_drawTexture(path, x, y, width, height) {
 
     //render image
     ctx.drawImage(_img, x - r_globalCamera.position.x, y - r_globalCamera.position.y, width, height);
+
+    if(r_debug) {
+      ctx.fillStyle = "red";
+      ctx.fillRect(x-4, y-4, 8, 8) //render pivot point
+    }
 }
 
 function r_drawNGon(x, y, side_num, radius, color) {
@@ -62,6 +68,11 @@ function r_drawNGon(x, y, side_num, radius, color) {
   }
   ctx.closePath();
   ctx.fill();
+
+  if(r_debug) {
+    ctx.fillStyle = "red";
+    ctx.fillRect(x-4, y-4, 8, 8) //render pivot point
+  }
 }
 
 function r_strokeNGon(x, y, side_num, radius, color, thickness) {
@@ -74,6 +85,11 @@ function r_strokeNGon(x, y, side_num, radius, color, thickness) {
   }
   ctx.closePath();
   ctx.stroke();
+
+  if(r_debug) {
+    ctx.fillStyle = "red";
+    ctx.fillRect(x-4, y-4, 8, 8) //render pivot point
+  }
 }
 
 function r_getV(r) {
@@ -86,6 +102,11 @@ function r_drawRectangle(x, y, width, height, style, alpha) {
   ctx.fillStyle = style;
   ctx.fillRect(x - r_globalCamera.position.x, y - r_globalCamera.position.y, width, height);
   ctx.globalAlpha = 1;
+
+  if(r_debug) {
+    ctx.fillStyle = "red";
+    ctx.fillRect(x-4, y-4, 8, 8) //render pivot point
+  }
 }
 
 function r_strokeRectangle(x, y, width, height, style, thickness, alpha) {
@@ -94,6 +115,11 @@ function r_strokeRectangle(x, y, width, height, style, thickness, alpha) {
   ctx.lineWidth = thickness;
   ctx.strokeRect(x - r_globalCamera.position.x, y - r_globalCamera.position.y, width, height);
   ctx.globalAlpha = 1;
+
+  if(r_debug) {
+    ctx.fillStyle = "red";
+    ctx.fillRect(x-4, y-4, 8, 8) //render pivot point
+  }
 }
 
 function r_drawPixel(x, y, style) {
@@ -117,4 +143,38 @@ function r_drawText(text, x, y, style) {
   }
 
   ctx.fillText(text, x, y);
+
+  if(r_debug) {
+    ctx.fillStyle = "red";
+    ctx.fillRect(x-4, y-4, 8, 8) //render pivot point
+  }
+}
+
+function ra_drawImage(path, x, y, width, height, pivotX, pivotY, angle, alpha) {
+  //pivots are a value between 0 and 2 that show where to rotate;
+
+  //setup image
+  let _img = new Image();
+
+  //gather path
+  if(path != null && path != undefined) _img.src = path;
+  else _img.src = "./Engine/assets/e_noTexture.png";
+
+  //render image
+  ctx.save();
+  ctx.globalAlpha = alpha;
+
+  ctx.translate(  x - (width*(pivotX)) - r_globalCamera.position.x, y - (height*(pivotY)) - r_globalCamera.position.y )
+  ctx.rotate(angle)
+  ctx.translate(  -x + (width*(pivotX)) - r_globalCamera.position.x, -y + (height*(pivotY)) - r_globalCamera.position.y )
+  
+  ctx.drawImage(_img, x - (width*(pivotX))-width - r_globalCamera.position.x, y - (height*(pivotY))-height, width, height);
+  
+  if(r_debug) {
+    ctx.fillStyle = "red";
+    ctx.fillRect(x - (width*(pivotX)) - r_globalCamera.position.x, y - (height*(pivotY)) - r_globalCamera.position.y, 8, 8) //render pivot point
+  }
+
+  ctx.restore();
+
 }
