@@ -150,6 +150,25 @@ function r_drawText(text, x, y, style) {
   }
 }
 
+function r_drawUITexture(path, x, y, width, height) {
+  //setup image
+  let _img = new Image();
+
+  //gather path
+  if(path != null && path != undefined) _img.src = path;
+  else _img.src = "./Engine/assets/e_noTexture.png";
+
+  //render image
+  ctx.drawImage(_img, x, y, width, height);
+}
+
+function r_drawUIRectangle(x, y, width, height, style, alpha) {
+  ctx.globalAlpha = alpha;
+  ctx.fillStyle = style;
+  ctx.fillRect(x, y, width, height);
+  ctx.globalAlpha = 1;
+}
+
 function ra_drawImage(path, x, y, width, height, pivotX, pivotY, angle, alpha) {
   //pivots are a value between 0 and 2 that show where to rotate;
 

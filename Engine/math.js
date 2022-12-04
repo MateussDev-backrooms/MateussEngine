@@ -32,7 +32,7 @@ function n_random() {
 
 function n_randomRange(min, max) {
   //returns random value between min and max
-  return min + (Math.random()*max);
+  return Math.random() * (max - min + 1) + min;
 }
 
 function v_random() {
