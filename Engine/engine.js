@@ -26,6 +26,7 @@ function e_init() {
       ctx.fillText("Error while rendering sceen. Check console for more info.", 64, 64);
     }
   }
+  e_preloadTextures();
   r_redraw();
   //start processess
   I_init();

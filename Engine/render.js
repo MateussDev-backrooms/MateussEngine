@@ -10,6 +10,14 @@ var r_isError = false;
 var r_clearScreen = true;
 var r_debug = false;
 
+var r_toPreloadTextures = [
+  {name: 'jeff', src: './Assets/Texture/t_jeff.png'}
+]
+
+let _validatedPaths = [
+  {key: 'sum ez path', value: 'the complex path'}
+]
+
 //Camera
 class Camera {
   constructor(position) {
@@ -29,6 +37,16 @@ class TextStyle {
 
 var r_globalCamera = new Camera(new Vector2(0, 0));
 
+function e_preloadTextures() {
+  for(let tex of r_toPreloadTextures) {
+    r_preloadSingleTexture(tex.name, tex.src);
+  }
+}
+
+function r_preloadSingleTexture(name, src) {
+  name = 'img_'+name;
+  window[name] = {name: name, src: src}
+}
 
 function r_redraw() {
   //clear screen on bool
@@ -40,15 +58,77 @@ function r_redraw() {
   r_reqAnimationFrame(r_redraw);
 }
 
+function r_validateEZPath(ez_path) {
+  //adds an EZ path
+  let complex_path = '';
+  //adds in the default texture directory for the EZ path
+  if(!ez_path.startsWith('./Assets/Texture/') && !ez_path.startsWith('Assets/Texture/')) {
+    complex_path = './Assets/Texture/'+ez_path
+  }
 
+  //adds in the .png if it is not in ez_path
+  if(!ez_path.endsWith('.png') && !ez_path.endsWith('.jpg') && !ez_path.endsWith('.bmp')) {
+    complex_path = complex_path+'.png'
+  }
+
+  //adds it to validated
+  _validatedPaths.push({key: ez_path, value: complex_path})
+}
+
+function r_findFullPathFromEZPath(ez_path) {
+  for(let path of _validatedPaths) {
+    if(path.key == ez_path) {
+      return path.value;
+    }
+  }
+  return undefined;
+}
 //shapes
 function r_drawTexture(path, x, y, width, height) {
     //setup image
     let _img = new Image();
 
     //gather path
-    if(path != null && path != undefined) _img.src = path;
-    else _img.src = "./Engine/assets/e_noTexture.png";
+    if((path.startsWith('./Assets/Texture/') || path.startsWith('Assets/Texture/')) && (path.endsWith('.png') || path.endsWith('.jpg') || path.endsWith('.bmp'))) {
+      if(!_img.complete) {
+        _img.src = "./Engine/assets/e_noTexture.png";
+      } else {
+        _img.src = path;
+      }
+    } else {
+      let _cmpl_path = r_findFullPathFromEZPath(path);
+      if(_cmpl_path == undefined) {
+        r_validateEZPath(path)
+        _cmpl_path = r_findFullPathFromEZPath(path);
+      }
+
+      //missing texture texture
+      if(!_img.complete) {
+        _img.src = "./Engine/assets/e_noTexture.png";
+      } else {
+        _img.src = _cmpl_path;
+      }
+    }
+
+    
+
+    
+
+    //render image
+    ctx.drawImage(_img, x - r_globalCamera.position.x, y - r_globalCamera.position.y, width, height);
+
+    if(r_debug) {
+      ctx.fillStyle = "red";
+      ctx.fillRect(x-4, y-4, 8, 8) //render pivot point
+    }
+}
+
+function r_drawPreloadedTexture(texture, x, y, width, height) {
+    //setup image
+    let _img = new Image();
+
+    //gather path
+    _img.src = texture.src;
 
     //render image
     ctx.drawImage(_img, x - r_globalCamera.position.x, y - r_globalCamera.position.y, width, height);
@@ -169,15 +249,24 @@ function r_drawUIRectangle(x, y, width, height, style, alpha) {
   ctx.globalAlpha = 1;
 }
 
-function ra_drawImage(path, x, y, width, height, pivotX, pivotY, angle, alpha) {
+function ra_drawTexture(path, x, y, width, height, pivotX, pivotY, angle, alpha) {
   //pivots are a value between 0 and 2 that show where to rotate;
 
   //setup image
   let _img = new Image();
 
   //gather path
-  if(path != null && path != undefined) _img.src = path;
-  else _img.src = "./Engine/assets/e_noTexture.png";
+
+  let _cmpl_path = r_findFullPathFromEZPath(path);
+  if(_cmpl_path == undefined) {
+    r_validateEZPath(path)
+    _cmpl_path = r_findFullPathFromEZPath(path);
+  }
+  if(!_img.complete) {
+    _img.src = "./Engine/assets/e_noTexture.png";
+  } else {
+    _img.src = _cmpl_path;
+  }
 
   //render image
   ctx.save();

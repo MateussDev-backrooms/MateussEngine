@@ -13,5 +13,5 @@ function update() {
 
 function r_update() {
   //runs rendering
-  ra_drawImage('./Assets/Texture/t_jeff.png', I_mouseX, I_mouseY, 256, 128, 0.5, 0.5, n_toRad(test), 1);
+  r_drawTexture('./Assets/Texture/t_jeff.png', I_mouseX, I_mouseY, 256, 256);
 }
